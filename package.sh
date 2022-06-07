@@ -2,7 +2,7 @@
 
 zip pwaizer.zip \
 manifest.json \
-background.js \
+#background.js \
 pwaizer.js \
 checker.js \
 PwaLogo.png \
