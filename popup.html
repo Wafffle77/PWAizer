@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <style>
+            h1 {
+                text-align: center;
+            }
+            select,button {
+                width: 100%;
+            }
+        </style>
+        <h1>Pwaizer</h1>
+        <table>
+            <tr>
+                <td>PWA Name</td>
+                <td><input id="nameInput" /></td>
+            </tr>
+            <tr>
+                <td>Display Type</td>
+                <td><select id="dispInput">
+                    <option>fullscreen</option>
+                    <option selected>standalone</option>
+                    <option>minimal-ui</option>
+                    <option>browser</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>Start URL</td>
+                <td><input id="startUrlInput" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button id="createButton">Create PWA</button>
+                </td>
+            </tr>
+        </table>
+        <script src="popup.js"></script>
+    </body>
+</html>

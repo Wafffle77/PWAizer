@@ -1,0 +1,21 @@
+{
+    "description": "Allows any website to be installed as a PWA",
+    "manifest_version": 2,
+    "name": "Pwaizer",
+    "version": "0.1",
+    "permissions": ["<all_urls>", "webRequestBlocking", "webRequest"],
+
+    "background": {
+        "scripts": ["background.js"]
+    },
+
+    "browser_action": {
+        "default_icon": "/PwaLogo.png",
+        "default_popup": "popup.html"
+    },
+
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["checker.js"]
+    }]
+}
