@@ -108,9 +108,11 @@ async function generatePWA() {
     }
     //#endregion service worker
     //#region install prompt
-    addEventListener('beforeinstallprompt', function(e) {
+    let installListener = e => {
         e.prompt();
-    });
+        removeEventListener('beforeinstallprompt', installListener);
+    };
+    addEventListener('beforeinstallprompt', installListener);
     //#endregion install prompt
 }
 
