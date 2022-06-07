@@ -22,11 +22,11 @@ window.addEventListener("load", async function() {
 
 createButton.addEventListener('click', async function(e) {
     let tabs = await tabPromise({currentWindow: true, active: true});
-    browser.tabs.executeScript(tabs[0].id, {code: `
-    window.pwaizerInject = {
-        name: '${btoa(nameInput.value)}',
-        display: '${btoa(dispInput.value)}',
-        start_url: '${btoa(startUrlInput.value)}'
-    }`});
+    let pwaizerInject = {
+        name: nameInput.value,
+        display: dispInput.value,
+        start_url: startUrlInput.value
+    };
+    browser.tabs.executeScript(tabs[0].id, {code: `window.pwaizerInject = ${JSON.stringify(pwaizerInject)};`});
     browser.tabs.executeScript(tabs[0].id, {file: "/pwaizer.js"});
 });
