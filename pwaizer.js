@@ -42,6 +42,31 @@ async function generatePWA() {
         });
     }));
 
+    if(!icons.map(x => x.sizes).includes('192x192')) {
+        let largestIcon = icons.reduce((p,c,i,a) => {
+            let pSize = parseInt(p.sizes.split("x")[0]);
+            let cSize = parseInt(c.sizes.split("x")[0]);
+            if(pSize < cSize) {
+                return(c);
+            } else {
+                return(p);
+            }
+        });
+        let img = new Image();
+        img.src = largestIcon.src;
+
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        canvas.width  = 192;
+        canvas.height = 192;
+        ctx.drawImage(img, 0, 0, 192, 192);
+
+        icons.push({
+            src: canvas.toDataURL('image/png'),
+            sizes: "192x192"
+        });
+    }
+
     let manifest = {
         background_color: style.backgroundColor,
         display: window.pwaizerInject.display || "standalone",
@@ -58,25 +83,27 @@ async function generatePWA() {
     let smallestIcon = icons.reduce((p,c,i,a) => {
         let pSize = parseInt(p.sizes.split("x")[0]);
         let cSize = parseInt(c.sizes.split("x")[0]);
-        console.log(pSize);
         if(pSize > cSize) {
             return(c);
         } else {
             return(p);
         }
     });
-    blobToDataURL((await (await fetch(smallestIcon.src)).blob()),x => localStorage.setItem("pwaizerIcon", x));
+    if(manifest.icons.every(x => !x.src.match(/data:/))) {
+        blobToDataURL((await (await fetch(smallestIcon.src)).blob()),x => localStorage.setItem("pwaizerIcon", x));
+    }
 
-    if (!document.querySelector("link[rel='manifest']") || document.querySelector("link[rel='manifest']").href.match(/data:application\/manifest\+json,.+/)) {
+    if (!document.querySelector("link[rel='manifest']")) {
         let manifestLink = document.createElement("link");
         manifestLink.setAttribute("rel", "manifest");
         manifestLink.setAttribute("href", manifestURL);
         document.head.appendChild(manifestLink);
+    } else if(document.querySelector("link[rel='manifest']").href.match(/data:application\/manifest\+json,.+/)) {
+        document.querySelector("link[rel='manifest']").setAttribute("href", manifestURL);
     }
     //#endregion manifest generation
     //#region service worker
     if (navigator.serviceWorker.getRegistration() !== undefined) {
-        console.log(window.pwaizerInject);
         await navigator.serviceWorker.register(`/pwaizerServiceWorker.js`, { scope: '/' });
     }
     //#endregion service worker
