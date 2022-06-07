@@ -39,6 +39,8 @@ const offlinePage = `
 </html>
 `;
 
+let caching = new URL(location).searchParams.get('caching') === 'true';
+
 fetch("/pwaizerServiceWorker.js", { mode: 'no-cors' }).then(res => {
     if (!res.ok) {
         console.log("Unable to reach service worker. Unregistering.");
@@ -47,8 +49,22 @@ fetch("/pwaizerServiceWorker.js", { mode: 'no-cors' }).then(res => {
 });
 
 self.addEventListener('fetch', function(e) {
-    e.respondWith(fetch(e.request).catch(() => new Response(
-        offlinePage, {
-            headers: { "content-type": "text/html" }
-        })));
+    if(caching) {
+        e.respondWith((async function() {
+            let cache = await caches.open("pwaizer");
+            try {
+                let res = await fetch(e.request);
+                cache.put(e.request.url,res.clone());
+                return(res);
+            } catch {
+                return(cache.match(e.request.url));
+            }
+        })());
+        
+    } else {
+        e.respondWith(fetch(e.request).catch(() => new Response(
+            offlinePage, {
+                headers: { "content-type": "text/html" }
+            })));
+    }
 });

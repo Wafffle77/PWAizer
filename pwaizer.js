@@ -104,7 +104,7 @@ async function generatePWA() {
     //#endregion manifest generation
     //#region service worker
     if (navigator.serviceWorker.getRegistration() !== undefined) {
-        await navigator.serviceWorker.register(`/pwaizerServiceWorker.js`, { scope: '/' });
+        await navigator.serviceWorker.register(`/pwaizerServiceWorker.js?caching=${window.pwaizerInject.caching}`, { scope: '/' });
     }
     //#endregion service worker
     //#region install prompt
