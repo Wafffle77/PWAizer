@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
     <body>
         <style>
+            body {
+                overflow: scroll;
+                width: 256px;
+            }
+            a, td, input, select {
+                font-size: 12;
+            }
             h1 {
                 text-align: center;
             }
             select,button {
                 width: 100%;
+            }
+            #createButton {
+                margin-top: 8px;
+            }
+            #iconsDiv {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                width: 100%;
+            }
+            #iconsDiv > .deselected {
+                filter: grayscale(0.75) blur(2px);
+            }
+            #iconsDiv > img {
+                border: 1px solid black;
+                width: calc(25% - 2px);
+                object-fit: contain;
             }
         </style>
         <h1>Pwaizer</h1>
@@ -32,12 +59,10 @@
                 <td>Caching</td>
                 <td><input type="checkbox" id="cachingInput" /></td>
             </tr>
-            <tr>
-                <td colspan="2">
-                    <button id="createButton">Create PWA</button>
-                </td>
-            </tr>
         </table>
+        <div>Select images to remove them from the icon list</div>
+        <div id="iconsDiv"></div>
+        <button id="createButton">Create PWA</button>
         <script src="popup.js"></script>
     </body>
 </html>
