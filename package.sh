@@ -2,7 +2,9 @@
 
 zip pwaizer.zip \
 manifest.json \
-#background.js \
-pwaizer.js \
+generatePWA.js \
 checker.js \
+getIcons.js \
+popup.html \
+popup.js \
 PwaLogo.png \
