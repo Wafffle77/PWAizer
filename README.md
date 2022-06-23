@@ -2,7 +2,7 @@ PWAizer
 =======
 
 PWAizer (rhymes with 'wiser') is a browser extension that dynamically generates a PWA (Progressive Web Application) manifest and service worker for any website to use. This allows (nearly) any chosen website to meet the [requirements](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs) to be installable as a PWA. 
-Use this at your own risk, as it relies on many unintended interactions to do what it does. It may cause (possibly severe) issues. Read through the Usage section completely and familiarize yourself with the concepts brefore doing anything.
+Use this at your own risk, as it relies on many unintended interactions to do what it does. It may cause (possibly severe) issues. Read through the Usage section completely and familiarize yourself with the concepts before doing anything.
 The PWA logo was created by Love2Dev and was sourced from https://github.com/docluv/pwa-logo
 
 Usage
