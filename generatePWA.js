@@ -24,7 +24,7 @@ function blobToDataURL(blob, callback) {
     let manifestURL = "data:application/manifest+json," + encodeURIComponent(JSON.stringify(manifest));
     
     localStorage.setItem("pwaizerManifest", manifestURL);
-    let smallestIcon = icons.reduce((p,c,i,a) => {
+    let smallestIcon = manifest.icons.reduce((p,c,i,a) => {
         let pSize = parseInt(p.sizes.split("x")[0]);
         let cSize = parseInt(c.sizes.split("x")[0]);
         if(pSize > cSize) {

@@ -6,6 +6,7 @@ let startUrlInput = document.getElementById("startUrlInput");
 let cachingInput = document.getElementById("cachingInput");
 let createButton = document.getElementById("createButton");
 let iconsDiv = document.getElementById("iconsDiv");
+let addIconInput = document.getElementById("addIconInput");
 
 let browser = window.browser || window.chrome;
 
@@ -45,26 +46,37 @@ function tabPromise(q) {
     }));
 }
 
+function addIcon(i) {
+    let img = new Image();
+    let con = document.createElement('div');
+    let sizeDiv = document.createElement('div');
+    sizeDiv.classList = "sizeIndicator";
+    con.appendChild(sizeDiv);
+    img.onload = function(event) {
+        sizeDiv.textContent = img.naturalWidth + 'x' + img.naturalHeight;
+    }
+    con.appendChild(img);
+    img.src = i.src;
+    img.addEventListener("click", function(e) {
+        console.log(iconsDiv.querySelectorAll('img.deselected'));
+        if (iconsDiv.querySelectorAll('img.deselected').length + 1 == iconsDiv.childElementCount - 1 && !e.target.className.includes("deselected")) {
+            alert("There must be at least one icon.");
+        } else {
+            e.target.classList.toggle('deselected');
+        }
+    });
+    iconsDiv.insertBefore(con,addIconInput.parentNode);
+    return(img);
+}
+
 window.addEventListener("load", async function() {
     let tabs = await tabPromise({ currentWindow: true, active: true });
     //TODO: replace with chrome.scripting.executeScript when manifest V3 is ready
     browser.tabs.executeScript(tabs[0].id, { file: "/getIcons.js" }, async function(urlList) {
         if (tabs[0].favIconUrl) { urlList[0].push(tabs[0].favIconUrl); }
         let icons = await processIcons(urlList[0]);
-        console.log(icons);
 
-        icons.forEach(i => {
-            let img = new Image();
-            img.src = i.src;
-            img.addEventListener("click", function(e) {
-                e.target.classList.toggle('deselected');
-                if (iconsDiv.querySelectorAll('img.deselected').length == iconsDiv.childElementCount) {
-                    alert("There must be at least one icon.");
-                    e.target.classList.toggle('deselected');
-                }
-            });
-            iconsDiv.appendChild(img);
-        });
+        icons.forEach(addIcon);
         globalThis.icons = icons;
     });
 
@@ -76,7 +88,9 @@ window.addEventListener("load", async function() {
 
 createButton.addEventListener('click', async function(e) {
     let tabs = await tabPromise({ currentWindow: true, active: true });
-    let icons = globalThis.icons.filter(x => iconsDiv.querySelector(`img[src="${x.src}"]`).className.includes("deselected") <= 0);
+    console.log(globalThis.icons);
+    //let icons = globalThis.icons.filter(x => iconsDiv.querySelector(`img[src="${x.src}"]`).className.includes("deselected") <= 0);
+    let icons = Array.from(iconsDiv.querySelectorAll('img:not(.deselected)')).map(img => ({sizes: img.naturalWidth + 'x' + img.naturalHeight, src: img.src}))
 
     if (!icons.map(x => x.sizes).includes('192x192')) {
         let largestIcon = icons.reduce((p, c, i, a) => {
@@ -120,6 +134,17 @@ createButton.addEventListener('click', async function(e) {
         start_url: startUrlInput.value,
         caching: cachingInput.checked
     };
+    console.log(JSON.stringify(pwaizerInject));
     browser.tabs.executeScript(tabs[0].id, { code: `window.pwaizerInject = ${JSON.stringify(pwaizerInject)};` });
     browser.tabs.executeScript(tabs[0].id, { file: "/generatePWA.js" });
+});
+
+let inputFileReader = new FileReader();
+addIconInput.addEventListener("input", function(event) {
+    inputFileReader.readAsDataURL(addIconInput.files[0]);
+})
+inputFileReader.addEventListener("load", function() {
+    let img = addIcon({src: inputFileReader.result});
+    
+    globalThis.icons.push({sizes: img.naturalWidth + 'x' + img.naturalHeight, src: img.src});
 });
