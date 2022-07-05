@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 from zipfile import ZipFile
 from argparse import ArgumentParser
 import sys
