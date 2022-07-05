@@ -58,7 +58,6 @@ function addIcon(i) {
     con.appendChild(img);
     img.src = i.src;
     img.addEventListener("click", function(e) {
-        console.log(iconsDiv.querySelectorAll('img.deselected'));
         if (iconsDiv.querySelectorAll('img.deselected').length + 1 == iconsDiv.childElementCount - 1 && !e.target.className.includes("deselected")) {
             alert("There must be at least one icon.");
         } else {
@@ -69,16 +68,20 @@ function addIcon(i) {
     return(img);
 }
 
+async function processIconUrlList(urlList) {
+    let tabs = await tabPromise({ currentWindow: true, active: true });
+    urlList = urlList[0].result || urlList[0];
+    if (tabs[0].favIconUrl) { urlList.push(tabs[0].favIconUrl); }
+    let icons = await processIcons(urlList);
+
+    icons.forEach(addIcon);
+    globalThis.icons = icons;
+}
+
 window.addEventListener("load", async function() {
     let tabs = await tabPromise({ currentWindow: true, active: true });
-    //TODO: replace with chrome.scripting.executeScript when manifest V3 is ready
-    browser.tabs.executeScript(tabs[0].id, { file: "/getIcons.js" }, async function(urlList) {
-        if (tabs[0].favIconUrl) { urlList[0].push(tabs[0].favIconUrl); }
-        let icons = await processIcons(urlList[0]);
-
-        icons.forEach(addIcon);
-        globalThis.icons = icons;
-    });
+    if(chrome.scripting) {chrome.scripting.executeScript({target: {tabId: tabs[0].id},  files: ["/getIcons.js"] }, processIconUrlList);}
+    else {browser.tabs.executeScript(tabs[0].id, { file: "/getIcons.js" }, processIconUrlList);}
 
     nameInput.value = tabs[0].title || '';
     dispInput.value = 'standalone';
@@ -88,7 +91,6 @@ window.addEventListener("load", async function() {
 
 createButton.addEventListener('click', async function(e) {
     let tabs = await tabPromise({ currentWindow: true, active: true });
-    console.log(globalThis.icons);
     //let icons = globalThis.icons.filter(x => iconsDiv.querySelector(`img[src="${x.src}"]`).className.includes("deselected") <= 0);
     let icons = Array.from(iconsDiv.querySelectorAll('img:not(.deselected)')).map(img => ({sizes: img.naturalWidth + 'x' + img.naturalHeight, src: img.src}))
 
@@ -134,9 +136,21 @@ createButton.addEventListener('click', async function(e) {
         start_url: startUrlInput.value,
         caching: cachingInput.checked
     };
-    console.log(JSON.stringify(pwaizerInject));
-    browser.tabs.executeScript(tabs[0].id, { code: `window.pwaizerInject = ${JSON.stringify(pwaizerInject)};` });
-    browser.tabs.executeScript(tabs[0].id, { file: "/generatePWA.js" });
+
+    if(chrome.scripting) {
+        chrome.scripting.executeScript({
+            target: {tabId: tabs[0].id}, 
+            func: x => {window.pwaizerInject = JSON.parse(x);},
+            args: [JSON.stringify(pwaizerInject)]
+        });
+        chrome.scripting.executeScript({
+            target: {tabId: tabs[0].id}, 
+            files: ["/generatePWA.js"]
+        });
+    } else {
+        browser.tabs.executeScript(tabs[0].id, { code: `window.pwaizerInject = ${JSON.stringify(pwaizerInject)};` });
+        browser.tabs.executeScript(tabs[0].id, { file: "/generatePWA.js" });
+    }
 });
 
 let inputFileReader = new FileReader();
