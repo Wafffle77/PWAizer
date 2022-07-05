@@ -48,7 +48,7 @@
         #iconsDiv > div,label {
             border: 1px solid black;
             width: calc(25% - 2px);
-            color: black;
+            color: transparent;
             background: radial-gradient(circle, #FFFFFF 10%, #DBDBDB 100%);
             aspect-ratio: 1;
             display: flex;
@@ -60,10 +60,11 @@
             position: absolute;
             bottom: 0px;
             color: inherit;
-            mix-blend-mode: difference;
+            text-shadow: inherit;
         }
         #iconsDiv > div:hover {
             color: white;
+            text-shadow: 0.05em 0 black, 0 0.05em black, -0.05em 0 black, 0 -0.05em black, -0.05em -0.05em black, -0.05em 0.05em black, 0.05em -0.05em black, 0.05em 0.05em black;
         }
         #iconsDiv > div > img {
             width: 100%;
