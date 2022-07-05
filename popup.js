@@ -7,6 +7,7 @@ let cachingInput = document.getElementById("cachingInput");
 let createButton = document.getElementById("createButton");
 let iconsDiv = document.getElementById("iconsDiv");
 let addIconInput = document.getElementById("addIconInput");
+let serviceWorkerError = document.getElementById("serviceWorkerError");
 
 let browser = window.browser || window.chrome;
 
@@ -80,6 +81,18 @@ async function processIconUrlList(urlList) {
 
 window.addEventListener("load", async function() {
     let tabs = await tabPromise({ currentWindow: true, active: true });
+    let testUrl = new URL(tabs[0].url)
+    testUrl.pathname = "/pwaizerServiceWorker.js";
+    try {
+        let serviceWorkerResponse = await fetch(testUrl);
+        if(serviceWorkerResponse.status != 200) {
+            serviceWorkerError.style.display = "block";
+            createButton.disabled = true;
+        }
+    } catch {
+        serviceWorkerError.style.display = "block";
+        createButton.disabled = true;
+    }
     if(chrome.scripting) {chrome.scripting.executeScript({target: {tabId: tabs[0].id},  files: ["/getIcons.js"] }, processIconUrlList);}
     else {browser.tabs.executeScript(tabs[0].id, { file: "/getIcons.js" }, processIconUrlList);}
 

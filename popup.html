@@ -76,6 +76,9 @@
             height: 0px;
             padding-bottom: 50%;
         }
+        #serviceWorkerError {
+            color: red;
+        }
         
     </style>
     <h1>Pwaizer</h1>
@@ -110,6 +113,8 @@
         </label>
     </div>
     <button id="createButton">Create PWA</button>
+    <div id="serviceWorkerError" style="display: none;">Unable to fetch service worker. Make sure you are connected to the proxy server and that it is properly configured, then reopen the menu.</div>
+    <a href="https://github.com/Wafffle77/PWAizer">https://github.com/Wafffle77/PWAizer</a>
     <script src="popup.js"></script>
 </body>
 
