@@ -91,7 +91,6 @@ window.addEventListener("load", async function() {
 
 createButton.addEventListener('click', async function(e) {
     let tabs = await tabPromise({ currentWindow: true, active: true });
-    //let icons = globalThis.icons.filter(x => iconsDiv.querySelector(`img[src="${x.src}"]`).className.includes("deselected") <= 0);
     let icons = Array.from(iconsDiv.querySelectorAll('img:not(.deselected)')).map(img => ({sizes: img.naturalWidth + 'x' + img.naturalHeight, src: img.src}))
 
     if (!icons.map(x => x.sizes).includes('192x192')) {
