@@ -30,4 +30,4 @@ As mentioned above, this extension relies on many unintended interactions to do 
 Building/Packaging
 ------------------
 
-To package the extension, you cna use the included python script to generate a zip file, which can then be installed in you browser of choice. The default options will install in Google Chrome, but other browsers will need different options. Firefox requires manifest v2 (As of June 2022). To see the available options and their defaults, run `package.py --help`. This requires Python 3 to run. Additionally, some browsers won't let you permanantly install sideloaded extensions. 
+To package the extension, you can use the included python script to generate a zip file, which can then be installed in you browser of choice. The default options will create a package installable in Google Chrome, but other browsers will need different options. Firefox requires manifest v2 (As of June 2022). To see the available options and their defaults, run `package.py --help`. This requires Python 3 to run. Additionally, some browsers won't let you permanantly install sideloaded extensions. 
